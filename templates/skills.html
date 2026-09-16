@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding-top:1.5rem">
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-card">
+    <span class="stat-icon">☰</span>
+    <span class="stat-value">{{ stats.done }}</span>
+    <span class="stat-label">Tarefas concluídas</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">📅</span>
+    <span class="stat-value">{{ stats.hours }}h</span>
+    <span class="stat-label">Horas planejadas</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">✓</span>
+    <span class="stat-value">{{ stats.doneHours }}h</span>
+    <span class="stat-label">Horas entregues</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🚀</span>
+    <span class="stat-value">{{ stats.activeProjects }}</span>
+    <span class="stat-label">Projetos ativos</span>
+  </div>
+</div>
+
+
+<!-- HEADER -->
+<div class="section-header">
+  <div>
+    <div class="section-title">Competências técnicas</div>
+    <div class="section-sub">{{ categories|length }} categorias · edite para adicionar itens conforme conclui cursos</div>
+  </div>
+</div>
+
+{% if not recruiter %}
+<!-- ADD FORM -->
+<div class="add-form" style="margin-bottom:1.5rem">
+  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:.75rem">+ Nova categoria</div>
+  <form method="post" action="{{ url_for('main.add_skill') }}">
+    <div class="form-grid">
+      <input name="icon" placeholder="🏷" maxlength="4" value="⚡" style="width:64px;text-align:center;font-size:20px;padding:8px">
+      <input class="fg-title" name="title" placeholder="Nome da categoria (ex: Cloud & DevOps)" required>
+      <input class="fg-title" name="items" placeholder="Itens separados por vírgula (ex: Docker, Kubernetes, Azure)">
+      <button class="btn btn-primary" type="submit">Adicionar</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+<!-- SKILLS GRID -->
+<div class="skills-grid">
+  {% for cat in categories %}
+  <div class="skill-cat-card">
+    <div class="skill-cat-header">
+      <span class="skill-cat-icon">{{ cat.icon }}</span>
+      <span class="skill-cat-title">{{ cat.title }}</span>
+      {% if not recruiter %}
+      <div class="skill-cat-actions">
+        <a class="btn" style="padding:3px 9px;font-size:12px" href="{{ url_for('main.edit_skill', cat_id=cat.id) }}">✏</a>
+        <form method="post" action="{{ url_for('main.delete_skill', cat_id=cat.id) }}" style="display:inline" onsubmit="return confirm('Excluir {{ cat.title }}?')">
+          <button class="btn btn-danger" style="padding:3px 9px;font-size:12px" type="submit">✕</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+    <ul class="skill-item-list">
+      {% for item in cat.items_list() %}
+        <li class="skill-item">{{ item }}</li>
+      {% else %}
+        <li style="color:var(--text-muted);font-size:12px;font-style:italic">Nenhum item — clique em ✏ para editar</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+
+</div>
+{% endblock %}

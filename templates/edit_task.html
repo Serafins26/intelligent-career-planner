@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-page">
+  <div style="margin-bottom:1.5rem">
+    <div class="section-title">Editar tarefa</div>
+  </div>
+  <div class="card">
+    <form method="post">
+      <div class="form-group">
+        <label class="form-label">T&#237;tulo</label>
+        <input class="form-control" name="title" value="{{ task.title }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">&#193;rea</label>
+        <select class="form-control" name="area">
+          {% for opt in ['Marca profissional','IA e Agentes','APIs e Integra&#231;&#245;es','Power Automate','UiPath','Conte&#250;do'] %}
+            <option value="{{ opt }}" {{ 'selected' if task.area==opt else '' }}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioridade</label>
+        <select class="form-control" name="priority">
+          {% for opt in ['Alta','Média','Baixa'] %}
+            <option value="{{ opt }}" {{ 'selected' if task.priority==opt else '' }}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-control" name="status">
+          {% for opt in ['Não iniciado','Em andamento','Concluído'] %}
+            <option value="{{ opt }}" {{ 'selected' if task.status==opt else '' }}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prazo</label>
+        <input class="form-control" type="date" name="due" value="{{ task.due }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horas</label>
+        <input class="form-control" type="number" min="1" name="hours" value="{{ task.hours }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Evid&#234;ncia (link)</label>
+        <input class="form-control" name="evidence" value="{{ task.evidence }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Anota&#231;&#245;es</label>
+        <input class="form-control" name="notes" value="{{ task.notes }}">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn" href="{{ url_for('main.planner') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

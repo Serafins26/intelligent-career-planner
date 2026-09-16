@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-page">
+  <div style="margin-bottom:1.5rem">
+    <div class="section-title">Editar projeto</div>
+  </div>
+  <div class="card">
+    <form method="post">
+      <div class="form-group">
+        <label class="form-label">Nome</label>
+        <input class="form-control" name="name" value="{{ project.name }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descri&#231;&#227;o</label>
+        <textarea class="form-control" name="description">{{ project.description }}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tecnologias (v&#237;rgula)</label>
+        <input class="form-control" name="stack" value="{{ project.stack }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-control" name="project_type">
+          <option value="Pessoal" {{ 'selected' if project.project_type|lower=='pessoal' else '' }}>Pessoal</option>
+          <option value="Corporativo" {{ 'selected' if project.project_type|lower=='corporativo' else '' }}>Corporativo</option>
+        </select>
+        <div class="form-hint" style="color:var(--text-dim);font-size:12px;margin-top:4px">
+          Projetos corporativos terão detalhes ocultos no modo Visualização (LGPD/NDA).
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-control" name="status">
+          {% for opt in ['Backlog','Discovery','Em desenvolvimento','Concluído'] %}
+            <option value="{{ opt }}" {{ 'selected' if project.status==opt else '' }}>{{ opt }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Progresso (%)</label>
+        <input class="form-control" type="number" min="0" max="100" name="progress" value="{{ project.progress }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GitHub (link)</label>
+        <input class="form-control" name="repo" value="{{ project.repo }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Demo (link)</label>
+        <input class="form-control" name="demo" value="{{ project.demo }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Evid&#234;ncias (links)</label>
+        <input class="form-control" name="evidence" value="{{ project.evidence }}" placeholder="Links separados por v&#237;rgula (imagens, v&#237;deos, docs)">
+        <div style="color:var(--text-dim);font-size:11px;margin-top:4px">Separe m&#250;ltiplos links por v&#237;rgula. Suporta .jpg, .png, .gif, .mp4, .webm (embute automaticamente na p&#225;gina de detalhes).</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">FTE (horas economizadas)</label>
+        <input class="form-control" type="number" min="0" step="0.001" name="fte_hours" value="{{ project.fte_hours or '' }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" name="sustained" value="1" {{ 'checked' if project.sustained else '' }}>
+          Sustentado em produ&#231;&#227;o (manuten&#231;&#227;o, evolu&#231;&#227;o, troubleshooting)
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Destaque</label>
+        <input class="form-control" name="highlight" value="{{ project.highlight }}">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:1rem">
+        <button class="btn btn-primary" type="submit">Salvar</button>
+        <a class="btn" href="{{ url_for('main.projects') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

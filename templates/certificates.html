@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding-top:1.5rem">
+
+<!-- STATS -->
+<div class="stats-row">
+  <div class="stat-card">
+    <span class="stat-icon">🏅</span>
+    <span class="stat-value">{{ certs|length }}</span>
+    <span class="stat-label">Certificados</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">⭐</span>
+    <span class="stat-value">{{ certs|selectattr('featured')|list|length }}</span>
+    <span class="stat-label">Em destaque</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🗂</span>
+    <span class="stat-value">{{ areas|length }}</span>
+    <span class="stat-label">Áreas cobertas</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">🔗</span>
+    <span class="stat-value">{{ certs|selectattr('linkedin_url')|list|length }}</span>
+    <span class="stat-label">Validados no LinkedIn</span>
+  </div>
+</div>
+
+
+<!-- HEADER -->
+<div class="section-header">
+  <div>
+    <div class="section-title">Certificados</div>
+    <div class="section-sub">{{ certs|length }} certificados · clique em "Ver no LinkedIn" para validar</div>
+  </div>
+</div>
+
+<!-- ADD FORM (oculto no modo visualização) -->
+{% if not recruiter %}
+<div class="add-form" style="margin-bottom:1.5rem">
+  <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:.75rem">+ Adicionar certificado</div>
+  <form method="post" action="{{ url_for('main.add_certificate') }}">
+    <div class="form-grid" style="gap:8px">
+      <input class="fg-title" name="name" placeholder="Nome do certificado *" required>
+      <input class="fg-sm" name="issuer" placeholder="Emissor (ex: UiPath Academy)">
+      <select class="fg-sm" name="area">
+        {% for opt in ['UiPath','Python','IA e Agentes','APIs e Integrações','Cloud','Power Automate','Geral'] %}
+          <option value="{{ opt }}">{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <input class="fg-xs" type="date" name="issued_date" title="Data de conclusão">
+      <input class="fg-xs" type="date" name="expiry_date" title="Validade (deixe em branco se não expira)">
+      <input class="fg-title" name="linkedin_url" placeholder="🔗 URL do LinkedIn">
+      <input class="fg-sm" name="credential_url" placeholder="URL alternativa (Credly, etc.)">
+      <input class="fg-sm" name="credential_id" placeholder="ID / Código do certificado">
+      <label style="display:flex;align-items:center;gap:6px;color:var(--text-dim);font-size:13px;cursor:pointer">
+        <input type="checkbox" name="featured" value="1"> ⭐ Destaque
+      </label>
+      <button class="btn btn-primary" type="submit">Salvar</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+<!-- GRID DE CERTIFICADOS -->
+{% if certs %}
+<div class="certs-grid">
+  {% for cert in certs %}
+  <div class="cert-card {% if cert.featured %}cert-featured{% endif %}">
+
+    {% if cert.featured %}
+    <div class="cert-badge-featured">⭐ Destaque</div>
+    {% endif %}
+
+    <div class="cert-area-tag">{{ cert.area }}</div>
+
+    <div class="cert-name">{{ cert.name }}</div>
+    <div class="cert-issuer">{{ cert.issuer or '—' }}</div>
+
+    <div class="cert-dates">
+      {% if cert.issued_date %}
+        📅 {{ cert.issued_date.strftime('%b/%Y') }}
+      {% endif %}
+      {% if cert.expiry_date %}
+        · Válido até {{ cert.expiry_date.strftime('%b/%Y') }}
+      {% endif %}
+      {% if not cert.expiry_date and cert.issued_date %}
+        · Sem validade
+      {% endif %}
+    </div>
+
+    {% if cert.credential_id %}
+    <div class="cert-id">ID: {{ cert.credential_id }}</div>
+    {% endif %}
+
+    <div class="cert-actions">
+      {% if cert.linkedin_url %}
+      <a class="btn btn-linkedin" href="{{ cert.linkedin_url }}" target="_blank" rel="noopener">
+        🔗 Ver no LinkedIn
+      </a>
+      {% endif %}
+      {% if cert.credential_url %}
+      <a class="btn" href="{{ cert.credential_url }}" target="_blank" rel="noopener" style="font-size:12px">
+        🌐 Credencial
+      </a>
+      {% endif %}
+      {% if not recruiter %}
+      <a class="btn" style="font-size:12px;margin-left:auto" href="{{ url_for('main.edit_certificate', cert_id=cert.id) }}">✏</a>
+      <form method="post" action="{{ url_for('main.delete_certificate', cert_id=cert.id) }}" style="display:inline" onsubmit="return confirm('Excluir este certificado?')">
+        <button class="btn btn-danger" style="font-size:12px" type="submit">✕</button>
+      </form>
+      {% endif %}
+    </div>
+
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="card" style="text-align:center;padding:3rem;color:var(--text-muted)">
+  <div style="font-size:48px;margin-bottom:1rem">🏅</div>
+  <div style="font-size:15px;margin-bottom:.5rem;color:var(--text-dim)">Nenhum certificado cadastrado ainda</div>
+  <div style="font-size:13px">Use o formulário acima para adicionar seus certificados com link do LinkedIn.</div>
+</div>
+{% endif %}
+
+</div>
+{% endblock %}

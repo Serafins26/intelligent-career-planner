@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding-top:1.5rem">
+
+{% set day_names = {'Mon':'Seg','Tue':'Ter','Wed':'Qua','Thu':'Qui','Fri':'Sex','Sat':'Sáb','Sun':'Dom'} %}
+
+<div class="section-header">
+  <div>
+    <div class="section-title">&#128197; Weekly Plan</div>
+    <div class="section-sub">{{ start.strftime('%d/%m/%Y') }} → {{ end.strftime('%d/%m/%Y') }}</div>
+  </div>
+</div>
+
+{% if recruiter %}
+  {# ── VISÃO RECRUTADOR: resumo macro por área ── #}
+  {% if macro %}
+  <div class="tasks-grid">
+    {% for area, info in macro.items() %}
+      <div class="task-card">
+        <div class="task-title">{{ area }}</div>
+        <div class="task-meta">
+          <span class="badge">{{ info.count }} atividade{{ 's' if info.count > 1 else '' }} esta semana</span>
+        </div>
+        <div class="task-info">
+          {% for it in info.items %}
+            &#8226; {{ it.title }}<br>
+          {% endfor %}
+          {% if info.count > info.items|length %}
+            <em>+{{ info.count - info.items|length }} mais</em>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="task-card" style="text-align:center;padding:2rem">
+      <div class="task-info">Nenhuma atividade planejada para esta semana.</div>
+    </div>
+  {% endif %}
+
+{% else %}
+  {# ── VISÃO ADMIN: detalhada por dia com ações ── #}
+
+  {% if by_day %}
+
+  <div class="tasks-grid">
+    {% for day, items in by_day.items() %}
+      <div class="task-card">
+        <div class="task-title">{{ day_names.get(day.strftime('%a'), day.strftime('%a')) }} {{ day.strftime('%d/%m') }}</div>
+        {% for task in items %}
+          <div class="task-meta" style="margin-top:.5rem">
+            <span class="badge">{{ task.area }}</span>
+            <span class="chip {{ 'high' if task.priority=='Alta' else ('med' if task.priority=='Média' else 'low') }}">{{ task.priority }}</span>
+            {% if task.status == 'Concluído' %}
+              <span class="chip done">&#10003; Concluído</span>
+            {% elif task.status == 'Em andamento' %}
+              <span class="chip wip">Em andamento</span>
+            {% endif %}
+          </div>
+          <div class="task-info"><strong>{{ task.title }}</strong> &middot; {{ task.hours }}h</div>
+          {% if task.notes %}<div class="task-info" style="color:#94a3b8;font-size:13px">&#128221; {{ task.notes }}</div>{% endif %}
+          <div class="task-actions">
+            <form method="post" action="{{ url_for('main.toggle_task', task_id=task.id) }}" style="display:inline">
+              <button class="btn" type="submit">{{ '↩ Desfazer' if task.completed or task.status=='Concluído' else '✓ Concluir' }}</button>
+            </form>
+            <a class="btn" href="{{ url_for('main.edit_task', task_id=task.id) }}">&#9998; Editar</a>
+            <button class="btn" type="button" onclick="this.parentElement.nextElementSibling.classList.toggle('show')">&#128221; Log</button>
+          </div>
+          <form method="post" action="{{ url_for('main.quick_log', task_id=task.id) }}" class="quick-log" style="display:none;margin-top:.5rem">
+            <input name="log" placeholder="O que aprendi / fiz / pr&#243;ximo passo..." style="flex:1;padding:.4rem .6rem;border:1px solid #334155;border-radius:6px;background:#1e293b;color:#e2e8f0;font-size:13px" required>
+            <button class="btn btn-primary" type="submit" style="font-size:12px">Salvar</button>
+          </form>
+          {% if not loop.last %}<hr style="border-color:#334155;margin:.75rem 0">{% endif %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <div class="task-card" style="text-align:center;padding:2rem">
+      <div class="task-info">Nenhuma tarefa agendada para esta semana.</div>
+      <div class="task-info" style="margin-top:.5rem">Use o botão <strong>&#128197; Semana</strong> no Plano para mover tarefas para cá.</div>
+    </div>
+  {% endif %}
+{% endif %}
+
+</div>
+{% endblock %}

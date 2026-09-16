@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="resume-page" style="padding-top:1.5rem;max-width:900px;margin:0 auto">
+
+  {# ── BOTÕES (somente tela; não renderiza no PDF) ── #}
+  {% if not pdf_mode %}
+  <div class="resume-actions no-print" style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px">
+    <a class="btn btn-primary" href="{{ url_for('main.resume_pdf') }}">Baixar PDF</a>
+    <button class="btn" onclick="window.print()">Imprimir</button>
+  </div>
+  {% endif %}
+
+  {# ── HEADER ── #}
+  <div class="resume-header" style="margin-bottom:16px">
+    <h1 class="resume-name">{{ resume_extra.get('name', 'Your Name') }}</h1>
+    <div class="resume-headline">{{ resume_extra.get('headline', 'Technology Professional | Automation | Cloud | Data Analytics') }}</div>
+    <div class="resume-contact-line">
+      {{ resume_extra.get('location', 'City, Country') }}
+      {% if resume_extra.get('email') %}| <a href="mailto:{{ resume_extra.email }}">{{ resume_extra.email }}</a>{% endif %}
+      {% if resume_extra.get('linkedin') %}| <a href="{{ resume_extra.linkedin }}" target="_blank">{{ resume_extra.linkedin }}</a>{% endif %}
+    </div>
+  </div>
+
+  <hr class="resume-divider">
+
+  {# ── RESUMO PROFISSIONAL ── #}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">RESUMO PROFISSIONAL</h2>
+    <p class="resume-text">{{ resume_extra.get('summary', '') }}</p>
+    {% if resume_extra.get('keywords') %}
+    <p class="resume-keywords">
+      <strong>Palavras-chave:</strong>
+      {{ resume_extra.get('keywords', [])|join(', ') }}
+    </p>
+    {% endif %}
+  </div>
+
+  <hr class="resume-divider">
+
+  {# ── EXPERIENCIA PROFISSIONAL ── #}
+  {% if resume_extra.get('experience') %}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">EXPERIENCIA PROFISSIONAL</h2>
+    {% for job in resume_extra.experience %}
+    <div class="resume-entry" style="margin-bottom:14px">
+      <div class="resume-entry-header">
+        <div>
+          <strong class="resume-entry-role">{{ job.role }}</strong>
+          <span class="resume-entry-company">{{ job.get('company', '') }}</span>
+        </div>
+        <div class="resume-entry-meta">
+          {{ job.get('period', '') }} | {{ job.get('location', '') }}
+        </div>
+      </div>
+      {% if job.get('highlights') %}
+      <ul class="resume-list">
+        {% for h in job.highlights %}
+          <li>{{ h }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if job.get('impact') %}
+      <ul class="resume-list">
+        {% for i in job.impact %}
+          <li>{{ i }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <hr class="resume-divider">
+  {% endif %}
+
+  {# ── COMPETENCIAS TECNICAS ── #}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">COMPETENCIAS TECNICAS</h2>
+    <div class="resume-skills-block">
+      {% for cat in categories %}
+      <p class="resume-skill-line">
+        <strong>{{ cat.title }}:</strong>
+        {{ cat.items_list()|join(', ') }}
+      </p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <hr class="resume-divider">
+
+  {# ── FORMACAO ACADEMICA ── #}
+  {% if resume_extra.get('education') %}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">FORMACAO ACADEMICA</h2>
+    {% for edu in resume_extra.education %}
+    <div class="resume-entry" style="margin-bottom:8px">
+      <div class="resume-entry-header">
+        <div>
+          <strong>{{ edu.degree }}</strong>
+          <span class="resume-entry-company">{{ edu.institution }}</span>
+        </div>
+        <div class="resume-entry-meta">
+          {{ edu.get('period', '') }}{% if edu.get('status') and edu.status != 'Concluido' %} ({{ edu.status }}){% endif %}
+        </div>
+      </div>
+      {% if edu.get('highlights') %}
+      <div class="resume-text" style="font-size:12px;margin-top:2px">{{ edu.highlights|join(', ') }}</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <hr class="resume-divider">
+  {% endif %}
+
+  {# ── CERTIFICADOS ── #}
+  {% if featured_certs %}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">CERTIFICADOS</h2>
+    <ul class="resume-list">
+      {% for c in featured_certs %}
+        <li>
+          {{ c.name }} -- {{ c.issuer }}{% if c.issued_date %} ({{ c.issued_date.strftime('%m/%Y') }}){% endif %}{% if c.credential_url %} -- Credencial: {{ c.credential_url }}{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <hr class="resume-divider">
+  {% endif %}
+
+  {# ── PROJETOS PESSOAIS ── #}
+  {% if projects %}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">PROJETOS PESSOAIS</h2>
+    {% for p in projects %}
+    <div class="resume-entry" style="margin-bottom:8px">
+      <strong>{{ p.name }}</strong>{% if p.stack %} | {{ p.stack }}{% endif %}
+      {% if p.description %}<div class="resume-text" style="font-size:12px">{{ p.description }}</div>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <hr class="resume-divider">
+  {% endif %}
+
+  {# ── METRICAS ── #}
+  <div class="resume-section">
+    <h2 class="resume-section-heading">METRICAS DE IMPACTO</h2>
+    <ul class="resume-list">
+      <li>{{ stats.completedProjects }} projetos concluidos</li>
+      <li>{{ stats.corporateProjects }} entregas corporativas</li>
+      <li>{{ stats.fteSaved }}h de FTE economizado em automacoes</li>
+      <li>{{ stats.certCount }} certificados obtidos</li>
+    </ul>
+  </div>
+
+</div>
+{% endblock %}

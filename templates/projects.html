@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="padding-top:1.5rem">
+
+<div class="stats-row">
+  {% if not recruiter %}
+    <div class="stat-card">
+      <span class="stat-icon">&#9776;</span>
+      <span class="stat-value">{{ stats.done }}</span>
+      <span class="stat-label">Tarefas conclu&#237;das</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#128197;</span>
+      <span class="stat-value">{{ stats.hours }}h</span>
+      <span class="stat-label">Horas planejadas</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#10003;</span>
+      <span class="stat-value">{{ stats.doneHours }}h</span>
+      <span class="stat-label">Horas entregues</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#128640;</span>
+      <span class="stat-value">{{ stats.activeProjects }}</span>
+      <span class="stat-label">Projetos ativos</span>
+    </div>
+  {% else %}
+    <div class="stat-card">
+      <span class="stat-icon">&#127942;</span>
+      <span class="stat-value">{{ stats.completedProjects }}</span>
+      <span class="stat-label">Projetos conclu&#237;dos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#128188;</span>
+      <span class="stat-value">{{ stats.corporateProjects }}</span>
+      <span class="stat-label">Projetos corporativos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#128295;</span>
+      <span class="stat-value">{{ stats.sustainedProjects }}</span>
+      <span class="stat-label">Projetos sustentados</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#127891;</span>
+      <span class="stat-value">{{ stats.certCount }}</span>
+      <span class="stat-label">Certificados</span>
+    </div>
+  {% endif %}
+</div>
+
+
+<div class="section-header">
+  <div>
+    <div class="section-title">Projetos</div>
+    <div class="section-sub">{{ projects|length }} projeto(s) encontrado(s)</div>
+  </div>
+  {% if not recruiter %}
+  <form method="post" action="{{ url_for('main.set_all_corporate') }}" style="display:inline" onsubmit="return confirm('Tem certeza? Isso vai marcar TODOS os projetos como Corporativo.')">
+    <button class="btn" type="submit" title="Marcar todos como Corporativo">💼 Todos Corporativo</button>
+  </form>
+  <form method="post" action="{{ url_for('main.mark_sustained_corporate') }}" style="display:inline;margin-left:.5rem" onsubmit="return confirm('Marcar todos os projetos Corporativos como sustentados?')">
+    <button class="btn" type="submit" title="Marcar corporativos como sustentados">🔧 Marcar sustentados (corp)</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="filter-bar" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center">
+  <form method="get" action="{{ url_for('main.projects') }}" style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;width:100%">
+    <input class="fr-md" type="text" name="q" value="{{ f_q }}" placeholder="&#128269; Buscar projeto...">
+    <select class="fr-md" name="status">
+      <option value="Todos"{% if f_status == 'Todos' %} selected{% endif %}>Status: Todos</option>
+      {% for opt in ['Backlog','Discovery','Em desenvolvimento','Conclu&#237;do'] %}
+        <option value="{{ opt }}"{% if f_status == opt %} selected{% endif %}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+    <select class="fr-md" name="tipo">
+      <option value="Todos"{% if f_tipo == 'Todos' %} selected{% endif %}>Tipo: Todos</option>
+      <option value="Pessoal"{% if f_tipo == 'Pessoal' %} selected{% endif %}>Pessoal</option>
+      <option value="Corporativo"{% if f_tipo == 'Corporativo' %} selected{% endif %}>Corporativo</option>
+    </select>
+    <select class="fr-md" name="tech">
+      <option value="Todas"{% if f_tech == 'Todas' %} selected{% endif %}>Tecnologia: Todas</option>
+      {% for t in all_techs %}
+        <option value="{{ t }}"{% if f_tech == t %} selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary" type="submit">Filtrar</button>
+    {% if f_status != 'Todos' or f_tipo != 'Todos' or f_tech != 'Todas' or f_q %}
+      <a class="btn" href="{{ url_for('main.projects') }}">Limpar</a>
+    {% endif %}
+  </form>
+</div>
+
+{% if not recruiter %}
+<div class="add-form">
+  <div class="add-form-header">
+    <span class="section-title" style="font-size:15px">Adicionar projeto</span>
+  </div>
+  <form method="post" action="{{ url_for('main.add_project') }}">
+    <div class="form-row">
+      <input class="fr-lg" name="name" placeholder="Nome do projeto" required>
+      <input class="fr-lg" name="description" placeholder="Descri&#231;&#227;o">
+      <input class="fr-md" name="stack" placeholder="Tecnologias (v&#237;rgula)">
+      <select class="fr-md" name="status">
+        {% for opt in ['Backlog','Discovery','Em desenvolvimento','Concluído'] %}
+          <option value="{{ opt }}">{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <input class="fr-sm" type="number" min="0" max="100" name="progress" value="0" placeholder="%">
+      <select class="fr-md" name="project_type">
+        <option value="Pessoal">Pessoal</option>
+        <option value="Corporativo">Corporativo</option>
+      </select>
+      <input class="fr-sm" type="number" min="0" step="0.001" name="fte_hours" placeholder="FTE (h)">
+      <input class="fr-md" name="repo" placeholder="GitHub (link)">
+      <input class="fr-md" name="demo" placeholder="Demo (link)">
+      <input class="fr-lg" name="evidence" placeholder="Evidências (links separados por vírgula)">
+      <input class="fr-md" name="highlight" placeholder="Destaque">
+      <button class="btn btn-primary" type="submit">Adicionar</button>
+    </div>
+  </form>
+  <div class="add-form-header" style="margin-top:10px">
+    <span class="section-title" style="font-size:15px">Importar projetos corporativos (CSV)</span>
+  </div>
+  <form method="post" action="{{ url_for('main.import_projects_csv') }}" enctype="multipart/form-data">
+    <div class="form-row">
+      <input class="fr-lg" type="file" name="file" accept=".csv" required>
+      <button class="btn btn-primary" type="submit">Importar CSV (UiPath)</button>
+    </div>
+    <div class="section-sub">Colunas: Projeto|Nome, Área (opcional), FTE (decimal), Progresso/Status (opcionais). Dados sensíveis serão suprimidos.</div>
+  </form>
+</div>
+{% endif %}
+
+<div class="projects-grid">
+  {% for p in projects %}
+    <div class="project-card">
+      <div class="project-title">{{ p.name }}</div>
+      <div class="task-meta">
+        <span class="badge">{{ p.status }}</span>
+        {% if not recruiter %}<span class="section-sub">{{ p.progress }}%</span>{% endif %}
+      </div>
+      {% if p.description %}
+        <div class="project-desc">
+          {% if p.project_type == 'Corporativo' and recruiter %}
+            Projeto corporativo – Detalhes e evidências restritos por políticas de confidencialidade e LGPD.
+          {% else %}
+            {{ p.description }}
+          {% endif %}
+        </div>
+      {% endif %}
+      {% if not recruiter %}<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:{{ p.progress }}%"></div></div>{% endif %}
+      <div class="task-meta" style="flex-wrap:wrap;gap:4px">
+        {% if p.stack %}
+          {% for tech in p.stack.split(',') %}
+            {% if tech.strip() %}<span class="badge">{{ tech.strip() }}</span>{% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="task-info">
+        {% if not (p.project_type == 'Corporativo' and recruiter) %}
+          {% if p.repo %}<a href="{{ p.repo }}" target="_blank">C&#243;digo &#8599;</a>{% endif %}
+          {% if p.demo %} &middot; <a href="{{ p.demo }}" target="_blank">Demo &#8599;</a>{% endif %}
+          {% if p.evidence %} &middot; <a href="{{ url_for('main.project_detail', project_id=p.id) }}">Evid&#234;ncias &#8594;</a>{% endif %}
+        {% else %}
+          <span style="color:var(--text-dim)">Referências e evidências não exibidas (confidencial).</span>
+        {% endif %}
+      </div>
+      {% if not recruiter %}
+      <div class="project-actions">
+        <a class="btn" href="{{ url_for('main.edit_project', project_id=p.id) }}">&#9998; Editar</a>
+        <form method="post" action="{{ url_for('main.delete_project', project_id=p.id) }}" style="display:inline">
+          <button class="btn btn-danger" type="submit">&#10005;</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}

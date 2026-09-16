@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="padding-top:1.5rem">
+
+<div class="stats-row">
+  {% if not recruiter %}
+    <div class="stat-card">
+      <span class="stat-icon">&#9776;</span>
+      <span class="stat-value">{{ stats.done }}</span>
+      <span class="stat-label">Tarefas conclu&#237;das</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#128197;</span>
+      <span class="stat-value">{{ stats.hours }}h</span>
+      <span class="stat-label">Horas planejadas</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#10003;</span>
+      <span class="stat-value">{{ stats.doneHours }}h</span>
+      <span class="stat-label">Horas entregues</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#128640;</span>
+      <span class="stat-value">{{ stats.activeProjects }}</span>
+      <span class="stat-label">Projetos ativos</span>
+    </div>
+  {% else %}
+    <div class="stat-card">
+      <span class="stat-icon">&#128221;</span>
+      <span class="stat-value">{{ stats.deliveries }}</span>
+      <span class="stat-label">Entregas</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#127942;</span>
+      <span class="stat-value">{{ stats.completedProjects }}</span>
+      <span class="stat-label">Projetos conclu&#237;dos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#127891;</span>
+      <span class="stat-value">{{ stats.certCount }}</span>
+      <span class="stat-label">Certificados</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">&#10003;</span>
+      <span class="stat-value">{{ stats.done }}</span>
+      <span class="stat-label">Tarefas conclu&#237;das</span>
+    </div>
+  {% endif %}
+</div>
+
+
+<div class="section-header">
+  <div>
+    <div class="section-title">Plano de aprendizado</div>
+    <div class="section-sub">{{ stats.done }} de {{ stats.total }} tarefas conclu&#237;das</div>
+  </div>
+  {% if not recruiter %}
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <div style="width:180px">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:{{ stats.progress }}%"></div></div>
+      <div class="progress-sub" style="margin-top:4px">{{ stats.progress }}% conclu&#237;do</div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<form method="get" action="{{ url_for('main.planner') }}">
+  <div class="filter-bar">
+    <input name="q" placeholder="&#128269; Buscar tarefa..." value="{{ q }}">
+    <select name="area">
+      <option value="Todas" {{ 'selected' if area=='Todas' else '' }}>Todas as &#225;reas</option>
+      {% for opt in ['UiPath','Python','IA e Agentes','APIs e Integrações','Power Automate','Marca profissional','Conteúdo'] %}
+        <option value="{{ opt }}" {{ 'selected' if area==opt else '' }}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+    <select name="status">
+      {% for opt in ['Todos','Não iniciado','Em andamento','Concluído'] %}
+        <option value="{{ opt }}" {{ 'selected' if status==opt else '' }}>{{ opt }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary" type="submit">Filtrar</button>
+  </div>
+</form>
+
+{% if not recruiter %}
+<div class="add-form">
+  <div class="add-form-header">
+    <span class="section-title" style="font-size:15px">Adicionar tarefa</span>
+    <span class="section-sub">T&#237;tulo obrigat&#243;rio &middot; Use os templates para preencher r&#225;pido</span>
+  </div>
+  <div style="display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap">
+    <button class="btn" type="button" onclick="fillTemplate('curso')" title="Preenche campos para tarefa de curso">&#127891; Template Curso</button>
+    <button class="btn" type="button" onclick="fillTemplate('projeto')" title="Preenche campos para tarefa de projeto">&#128736; Template Projeto</button>
+    <form method="post" action="{{ url_for('main.seed_milestones') }}" style="display:inline">
+      <button class="btn" type="submit" title="Cria marcos estrat&#233;gicos (DoD, Candidatura, UiARD)">&#127919; Criar marcos</button>
+    </form>
+  </div>
+  <form method="post" action="{{ url_for('main.add_task') }}" id="addTaskForm">
+    <div class="form-row">
+      <input class="fr-lg" name="title" id="t_title" placeholder="T&#237;tulo da tarefa" required>
+      <select class="fr-md" name="area" id="t_area">
+      {% for opt in ['UiPath','Python','IA e Agentes','APIs e Integrações','Power Automate','Marca profissional','Conteúdo','Projeto'] %}
+          <option value="{{ opt }}">{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <select class="fr-md" name="priority" id="t_priority">
+        {% for opt in ['Alta','Média','Baixa'] %}
+          <option value="{{ opt }}">{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <select class="fr-md" name="status" id="t_status">
+        {% for opt in ['Não iniciado','Em andamento','Concluído'] %}
+          <option value="{{ opt }}">{{ opt }}</option>
+        {% endfor %}
+      </select>
+      <input class="fr-md" type="date" name="due" id="t_due">
+      <input class="fr-sm" type="number" min="1" name="hours" value="1" id="t_hours">
+      <input class="fr-md" name="evidence" id="t_evidence" placeholder="Link evid&#234;ncia">
+      <input class="fr-lg" name="notes" id="t_notes" placeholder="Anota&#231;&#245;es / micro-log da sess&#227;o">
+      <button class="btn btn-primary" type="submit">Salvar</button>
+    </div>
+  </form>
+</div>
+<script>
+function fillTemplate(type) {
+  if (type === 'curso') {
+    document.getElementById('t_title').value = '';
+    document.getElementById('t_title').placeholder = 'Ex: UiPath Advanced — Orchestrator for Developers';
+    document.getElementById('t_area').value = 'UiPath';
+    document.getElementById('t_priority').value = 'Alta';
+    document.getElementById('t_status').value = 'Não iniciado';
+    document.getElementById('t_hours').value = 2;
+    document.getElementById('t_notes').value = '';
+    document.getElementById('t_notes').placeholder = 'O que aprendi: ... | Próximo: ...';
+    document.getElementById('t_title').focus();
+  } else if (type === 'projeto') {
+    document.getElementById('t_title').value = '';
+    document.getElementById('t_title').placeholder = 'Ex: AI Email Processor — endpoint /classify';
+    document.getElementById('t_area').value = 'Projeto';
+    document.getElementById('t_priority').value = 'Alta';
+    document.getElementById('t_status').value = 'Não iniciado';
+    document.getElementById('t_hours').value = 1;
+    document.getElementById('t_notes').value = '';
+    document.getElementById('t_notes').placeholder = 'Entregável: ... | Bloqueio: ... | Evidência: ...';
+    document.getElementById('t_title').focus();
+  }
+}
+</script>
+{% endif %}
+
+<div class="tasks-grid">
+  {% for task in tasks %}
+    <div class="task-card">
+      <div class="task-title">{{ task.title }}</div>
+      <div class="task-meta">
+        <span class="badge">{{ task.area }}</span>
+        <span class="chip {{ 'high' if task.priority=='Alta' else ('med' if task.priority=='Média' else 'low') }}">{{ task.priority }}</span>
+        {% if task.status == 'Conclu&#237;do' %}
+          <span class="chip done">{{ task.status }}</span>
+        {% elif task.status == 'Em andamento' %}
+          <span class="chip wip">{{ task.status }}</span>
+        {% else %}
+          <span class="badge">{{ task.status }}</span>
+        {% endif %}
+      </div>
+      <div class="task-info">
+        {{ task.due or 'Sem prazo' }} &middot; {{ task.hours }}h
+        {% if task.evidence %} &middot; <a href="{{ task.evidence }}" target="_blank">Evid&#234;ncia &#8599;</a>{% endif %}
+      </div>
+      {% if task.notes %}<div class="task-info">{{ task.notes }}</div>{% endif %}
+      {% if not recruiter %}
+      <div class="task-actions">
+        <form method="post" action="{{ url_for('main.toggle_task', task_id=task.id) }}" style="display:inline">
+          <button class="btn" type="submit">{{ '↩ Desfazer' if task.completed or task.status=='Concluído' else '✓ Concluir' }}</button>
+        </form>
+        <a class="btn" href="{{ url_for('main.edit_task', task_id=task.id) }}">&#9998; Editar</a>
+        <div style="display:inline;position:relative" class="week-dropdown">
+          <button class="btn" type="button" onclick="this.nextElementSibling.classList.toggle('show')" title="Agendar na semana">&#128197; Semana</button>
+          <div class="week-menu">
+            {% for day_val, day_label in [(0,'Seg'),(1,'Ter'),(2,'Qua'),(3,'Qui'),(4,'Sex'),(5,'Sáb')] %}
+            <form method="post" action="{{ url_for('main.send_to_week', task_id=task.id) }}" style="margin:0">
+              <input type="hidden" name="day" value="{{ day_val }}">
+              <button class="week-menu-item" type="submit">{{ day_label }}</button>
+            </form>
+            {% endfor %}
+          </div>
+        </div>
+        <form method="post" action="{{ url_for('main.delete_task', task_id=task.id) }}" style="display:inline">
+          <button class="btn btn-danger" type="submit">&#10005;</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}

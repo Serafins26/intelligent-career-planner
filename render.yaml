@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: intelligent-career-planner
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    autoDeploy: true
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_KEY
+        value: admin2026

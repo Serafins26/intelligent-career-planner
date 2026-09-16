@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div style="padding-top:1.5rem;max-width:600px">
+
+  <div class="section-header" style="margin-bottom:1.5rem">
+    <div class="section-title">Editar categoria</div>
+    <a class="btn" href="{{ url_for('main.skills') }}">← Voltar</a>
+  </div>
+
+  <div class="card">
+    <form method="post" action="{{ url_for('main.save_skill', cat_id=cat.id) }}">
+
+      <div class="form-group">
+        <label class="form-label">Ícone (emoji)</label>
+        <input class="form-control" name="icon" value="{{ cat.icon }}" maxlength="4" style="width:80px;text-align:center;font-size:22px">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nome da categoria</label>
+        <input class="form-control" name="title" value="{{ cat.title }}" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Competências (separadas por vírgula)</label>
+        <textarea class="form-control" name="items" rows="5" placeholder="Python para automação, SQL, Git e GitHub, Documentação técnica">{{ cat.items }}</textarea>
+        <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Cada item separado por vírgula vira uma linha na lista.</div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem">
+        <a class="btn" href="{{ url_for('main.skills') }}">Cancelar</a>
+        <button class="btn btn-primary" type="submit">Salvar</button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}

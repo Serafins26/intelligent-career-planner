@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Intelligent Career Planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="brand">
+    <div class="brand-icon">IC</div>
+    <div class="brand-text">
+      <small>Intelligent</small>
+      <strong>Career Planner</strong>
+    </div>
+  </div>
+  <div class="nav-actions">
+    {% if is_admin %}
+      {# ADMIN logado #}
+      {% if recruiter is defined and recruiter %}
+        <span class="recruiter-badge">&#128065; Modo Visualização</span>
+        <form method="post" action="{{ url_for('main.toggle_recruiter') }}" style="display:inline">
+          <button class="btn btn-recruiter-off" type="submit">&#9998; Modo Edição</button>
+        </form>
+      {% else %}
+        <span class="admin-badge">&#9998; Modo Edição</span>
+        <form method="post" action="{{ url_for('main.toggle_recruiter') }}" style="display:inline">
+          <button class="btn btn-recruiter" type="submit">&#128065; Modo Visualização</button>
+        </form>
+        <a class="btn btn-hidden-mobile" href="{{ url_for('main.export_data') }}">&#11015; Backup</a>
+        <form action="{{ url_for('main.import_data') }}" method="post" enctype="multipart/form-data" class="import-form btn-hidden-mobile">
+          <input type="file" name="file" accept="application/json" class="file-input">
+          <button class="btn" type="submit">&#11014; Restaurar</button>
+        </form>
+      {% endif %}
+      <form method="post" action="{{ url_for('main.admin_logout') }}" style="display:inline">
+        <button class="btn btn-danger" type="submit" title="Sair do admin">&#128682;</button>
+      </form>
+    {% else %}
+      {# VISITANTE — apenas visualização, sem controles de edição #}
+      <span class="recruiter-badge">&#128065; Modo Visualização</span>
+    {% endif %}
+  </div>
+</nav>
+
+{% if recruiter is defined and recruiter %}
+<div class="recruiter-banner">
+  &#128065; Você está no <strong>Modo Visualização</strong> — somente leitura. Nenhuma alteração pode ser feita neste modo.
+</div>
+{% endif %}
+
+<nav class="tab-nav tab-nav-top">
+  <a class="tab-link{% if request.endpoint == 'main.about' %} active{% endif %}" href="{{ url_for('main.about') }}">Início</a>
+  {# Plano: visível só para ADMIN e fora do modo Visualização #}
+  {% if is_admin and not (recruiter is defined and recruiter) %}
+    <a class="tab-link{% if request.endpoint == 'main.planner' %} active{% endif %}" href="{{ url_for('main.planner') }}">Plano</a>
+  {% endif %}
+  {# Weekly: visível só para ADMIN e fora do modo Visualização #}
+  {% if is_admin and not (recruiter is defined and recruiter) %}
+    <a class="tab-link{% if request.endpoint == 'main.weekly_plan' %} active{% endif %}" href="{{ url_for('main.weekly_plan') }}">Weekly</a>
+  {% endif %}
+  <a class="tab-link{% if request.endpoint == 'main.projects' %} active{% endif %}" href="{{ url_for('main.projects') }}">Projetos</a>
+  <a class="tab-link{% if request.endpoint == 'main.skills' %} active{% endif %}" href="{{ url_for('main.skills') }}">Compet&#234;ncias</a>
+  <a class="tab-link{% if request.endpoint == 'main.certificates' %} active{% endif %}" href="{{ url_for('main.certificates') }}">Certificados</a>
+  <a class="tab-link{% if request.endpoint == 'main.resume' %} active{% endif %}" href="{{ url_for('main.resume') }}">Resume</a>
+</nav>
+
+<div class="app-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert {{ category }}" style="margin-top:1rem">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</div>
+
+<footer class="app-footer">
+  <span>&#128190; SQLite local &mdash; data/app.db</span>
+  <span>Intelligent Career Planner &mdash; Open Source</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

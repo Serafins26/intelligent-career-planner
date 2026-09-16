@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding-top:1.5rem;max-width:640px">
+
+  <div class="section-header" style="margin-bottom:1.5rem">
+    <div class="section-title">Editar certificado</div>
+    <a class="btn" href="{{ url_for('main.certificates') }}">← Voltar</a>
+  </div>
+
+  <div class="card">
+    <form method="post" action="{{ url_for('main.save_certificate', cert_id=cert.id) }}">
+
+      <div class="form-group">
+        <label class="form-label">Nome do certificado *</label>
+        <input class="form-control" name="name" value="{{ cert.name }}" required>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label">Emissor</label>
+          <input class="form-control" name="issuer" value="{{ cert.issuer or '' }}" placeholder="UiPath Academy, Alura, Coursera...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Área</label>
+          <select class="form-control" name="area">
+            {% for opt in ['UiPath','Python','IA e Agentes','APIs e Integrações','Cloud','Power Automate','Geral'] %}
+              <option value="{{ opt }}" {{ 'selected' if cert.area == opt else '' }}>{{ opt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label">Data de conclusão</label>
+          <input class="form-control" type="date" name="issued_date" value="{{ cert.issued_date.strftime('%Y-%m-%d') if cert.issued_date else '' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Validade (vazio = não expira)</label>
+          <input class="form-control" type="date" name="expiry_date" value="{{ cert.expiry_date.strftime('%Y-%m-%d') if cert.expiry_date else '' }}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🔗 URL do LinkedIn</label>
+        <input class="form-control" name="linkedin_url" value="{{ cert.linkedin_url or '' }}" placeholder="https://www.linkedin.com/learning/certificates/...">
+        <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Esta URL aparecerá como botão "Ver no LinkedIn" para recrutadores.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL alternativa (Credly, site da certificadora, PDF...)</label>
+        <input class="form-control" name="credential_url" value="{{ cert.credential_url or '' }}" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">ID / Código do certificado</label>
+        <input class="form-control" name="credential_id" value="{{ cert.credential_id or '' }}" placeholder="Código emitido pela plataforma">
+      </div>
+
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text-dim);font-size:13px">
+          <input type="checkbox" name="featured" value="1" {{ 'checked' if cert.featured else '' }}>
+          ⭐ Marcar como destaque (aparece no topo do grid)
+        </label>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem">
+        <a class="btn" href="{{ url_for('main.certificates') }}">Cancelar</a>
+        <button class="btn btn-primary" type="submit">Salvar</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="padding-top:1.5rem;max-width:900px;margin:0 auto">
+  <div class="section-header">
+    <div>
+      <div class="section-title">{{ project.name }}</div>
+      <div class="section-sub">{{ project.status }}{% if project.project_type %} · {{ project.project_type }}{% endif %}{% if project.fte_hours and not (project.project_type == 'Corporativo' and recruiter) %} · FTE: {{ project.fte_hours }}h{% endif %}</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      {% if not recruiter and is_admin %}
+        <a class="btn" href="{{ url_for('main.edit_project', project_id=project.id) }}">&#9998; Editar</a>
+      {% endif %}
+      <a class="btn" href="{{ url_for('main.projects') }}">← Voltar</a>
+    </div>
+  </div>
+
+  {% if project.description %}
+  <div class="card" style="padding:14px">
+    <div class="project-desc">
+      {% if project.project_type == 'Corporativo' and recruiter %}
+        Projeto corporativo — detalhes e evidências restritos por políticas de confidencialidade e LGPD.
+      {% else %}
+        {{ project.description }}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="task-meta" style="flex-wrap:wrap;gap:4px;margin:.5rem 0 1rem">
+    {% if project.stack %}
+      {% for tech in project.stack.split(',') %}
+        {% if tech.strip() %}<span class="badge">{{ tech.strip() }}</span>{% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  {% if project.sustained %}
+  <div class="task-meta" style="margin-bottom:.5rem"><span class="badge" style="background:var(--accent);color:#fff">🔧 Sustentado em produção</span></div>
+  {% endif %}
+
+  <div class="section-header" style="margin:1rem 0 .5rem"><div class="section-title">Evidências</div></div>
+
+  {% if project.project_type == 'Corporativo' and recruiter %}
+    <div class="card" style="color:var(--text-dim);padding:16px;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🔒</div>
+      <div>Evidências deste projeto corporativo não são exibidas no modo visualização por políticas de confidencialidade e LGPD.</div>
+      <div style="font-size:12px;margin-top:6px">Projetos pessoais e itens genéricos (ex.: REFramework) possuem evidências públicas.</div>
+    </div>
+  {% elif evidences %}
+  <div class="cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
+    {% for link in evidences %}
+      <div class="card" style="padding:10px">
+        {% set link_lower = link.lower() %}
+        {% if link_lower.endswith('.mp4') or link_lower.endswith('.webm') %}
+          <video src="{{ link }}" controls preload="metadata" style="width:100%;height:auto;border-radius:6px;margin-bottom:6px"></video>
+        {% elif link_lower.endswith('.jpg') or link_lower.endswith('.jpeg') or link_lower.endswith('.png') or link_lower.endswith('.gif') %}
+          <img src="{{ link }}" alt="Evidência" loading="lazy" style="max-width:100%;height:auto;border-radius:6px;margin-bottom:6px"/>
+        {% endif %}
+        <div class="task-info" style="display:flex;gap:8px;align-items:center">
+          <a href="{{ link }}" target="_blank" rel="noopener">Abrir ↗</a>
+          <a href="{{ link }}" download style="font-size:12px;color:var(--text-dim)">⬇ Download</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card" style="color:var(--text-dim);padding:14px">Sem evidências cadastradas para este projeto.</div>
+  {% endif %}
+
+  <div class="section-sub" style="margin-top:12px;color:var(--text-dim);font-size:11px">
+    Observação: Projetos corporativos podem ter evidências limitadas por confidencialidade (LGPD/NDA).
+  </div>
+</div>
+{% endblock %}

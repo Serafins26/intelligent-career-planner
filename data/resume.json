@@ -1,0 +1,68 @@
+{
+  "name": "Jane Doe",
+  "headline": "Technology Professional | Automation | Cloud | Data Analytics",
+  "location": "São Paulo, SP, Brasil",
+  "email": "you@example.com",
+  "linkedin": "https://www.linkedin.com/in/yourprofile/",
+  "summary": "Technology professional with experience in automation, cloud computing, and data analytics. Passionate about using technology to solve real business problems and improve operational efficiency. This is a demo profile — replace it with your own information.",
+  "keywords": ["Automation", "Cloud", "Python", "SQL", "Power BI", "RPA", "Data Analytics", "APIs", "CI/CD", "Agile"],
+  "education": [
+    {
+      "degree": "Bachelor in Computer Science",
+      "institution": "Demo University",
+      "period": "2018 – 2022",
+      "status": "Concluído"
+    },
+    {
+      "degree": "Technical Certificate in Networking",
+      "institution": "Demo Technical School",
+      "period": "2016 – 2017",
+      "status": "Concluído",
+      "highlights": ["Network Security", "Infrastructure", "Troubleshooting"]
+    }
+  ],
+  "experience": [
+    {
+      "role": "Automation Developer",
+      "company": "Demo Corp",
+      "period": "2023 – present",
+      "location": "São Paulo, SP, Brasil",
+      "type": "Full-time",
+      "highlights": [
+        "Development and deployment of business process automations",
+        "API integrations with internal and external systems",
+        "Technical leadership on selected projects",
+        "Monitoring, troubleshooting, and production incident resolution"
+      ],
+      "impact": [
+        "Reduced manual effort by 40% across key processes",
+        "Improved data quality and consistency",
+        "Enhanced traceability and auditability"
+      ]
+    },
+    {
+      "role": "IT Analyst",
+      "company": "Demo Corp",
+      "period": "2020 – 2023",
+      "location": "São Paulo, SP, Brasil",
+      "type": "Full-time",
+      "highlights": [
+        "IT governance, compliance, and audit support",
+        "Project management and stakeholder reporting",
+        "Process documentation and improvement"
+      ]
+    },
+    {
+      "role": "IT Support Technician",
+      "company": "Demo Corp",
+      "period": "2018 – 2020",
+      "location": "São Paulo, SP, Brasil",
+      "type": "Full-time",
+      "highlights": [
+        "End-user support (N1/N2)",
+        "Infrastructure maintenance and incident management",
+        "ITSM processes and change management"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="hero-section">
+  <div>
+    <div class="hero-badge">&#9881; Intelligent Career Planner</div>
+    <h1 class="hero-headline">
+      Organize sua carreira.<br>
+      <span class="gradient">Estudos, projetos, certificados e metas em um s&#243; lugar.</span>
+    </h1>
+    <p class="hero-desc">Uma plataforma aberta para profissionais de tecnologia organizarem seu desenvolvimento profissional &#8212; RPA Developers, Analistas de Dados, Engenheiros de IA, Governan&#231;a de TI, Infraestrutura ou estudantes.</p>
+  </div>
+
+  <div>
+    <div class="progress-card">
+      <div class="progress-card-header">
+        <span class="progress-card-label">Progresso geral</span>
+        <div class="progress-card-icon">&#9711;</div>
+      </div>
+      <div class="progress-percent">{{ stats.progress }}%</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:{{ stats.progress }}%"></div>
+      </div>
+      <div class="progress-sub">{{ stats.done }} de {{ stats.total }} tarefas conclu&#237;das</div>
+    </div>
+  </div>
+</section>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <span class="stat-icon">&#9776;</span>
+    <span class="stat-value">{{ stats.done }}</span>
+    <span class="stat-label">Tarefas conclu&#237;das</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">&#128197;</span>
+    <span class="stat-value">{{ stats.hours }}h</span>
+    <span class="stat-label">Horas planejadas</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">&#127891;</span>
+    <span class="stat-value">{{ stats.certCount }}</span>
+    <span class="stat-label">Certificados</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-icon">&#128640;</span>
+    <span class="stat-value">{{ stats.activeProjects }}</span>
+    <span class="stat-label">Projetos ativos</span>
+  </div>
+</div>
+
+<div class="about-grid">
+  <div>
+    <div class="card">
+      <div class="card-title">&#128161; O que &#233; o Intelligent Career Planner?</div>
+      <p style="color:var(--text-dim);font-size:13px;line-height:1.8;margin-bottom:.75rem">
+        Este projeto nasceu da necessidade de organizar informa&#231;&#245;es relacionadas ao desenvolvimento profissional, centralizando estudos, projetos, certifica&#231;&#245;es e metas em um &#250;nico lugar.
+      </p>
+      <p style="color:var(--text-dim);font-size:13px;line-height:1.8;margin-bottom:.75rem">
+        A proposta &#233; disponibilizar uma base que possa ser utilizada e adaptada por qualquer profissional de tecnologia.
+      </p>
+      <p style="color:var(--text-dim);font-size:13px;line-height:1.8">
+        Customize com seus pr&#243;prios dados editando <code>data/resume.json</code> e usando o painel admin para adicionar tarefas, projetos, compet&#234;ncias e certificados.
+      </p>
+    </div>
+    <div class="card">
+      <div class="card-title">&#10004; Funcionalidades</div>
+      <ul class="check-list">
+        <li>Plano de estudos com &#225;rea, prioridade, prazo e horas estimadas</li>
+        <li>Revis&#227;o semanal (Weekly Review) com log di&#225;rio</li>
+        <li>Gest&#227;o de projetos pessoais e corporativos com progresso e evid&#234;ncias</li>
+        <li>Dashboard de compet&#234;ncias t&#233;cnicas por categoria</li>
+        <li>Gerenciador de certificados com emissor, data e credencial</li>
+        <li>Gerador de curr&#237;culo (HTML + PDF) baseado nos dados do banco</li>
+        <li>Modo admin protegido + modo visualiza&#231;&#227;o (recrutador)</li>
+        <li>Backup e restaura&#231;&#227;o de dados em JSON</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">&#9881; Tecnologias</div>
+      <div class="tag-list">
+        {% for tag in ['Python','Flask','SQLAlchemy','SQLite','Jinja2','HTML/CSS','JavaScript','WeasyPrint','Gunicorn','Render'] %}
+          <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="about-side">
+    <div class="card">
+      <div class="card-title">&#128640; Primeiros passos</div>
+      <ul class="check-list">
+        <li>Clone o reposit&#243;rio e rode <code>pip install -r requirements.txt</code></li>
+        <li>Execute <code>python app.py</code> &#8212; o banco &#233; criado automaticamente com dados demo</li>
+        <li>Acesse <code>/admin?key=admin2026</code> para ativar o modo edi&#231;&#227;o</li>
+        <li>Edite <code>data/resume.json</code> com seus dados pessoais</li>
+        <li>Adicione seus pr&#243;prios projetos, certificados e compet&#234;ncias pelo admin</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127891; P&#250;blico-alvo</div>
+      <ul class="check-list">
+        <li>Desenvolvedores e RPA Developers</li>
+        <li>Analistas de Dados e BI</li>
+        <li>Profissionais de IA e Automa&#231;&#227;o</li>
+        <li>Governan&#231;a de TI e Infraestrutura</li>
+        <li>Estudantes de tecnologia</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">&#127885; Sobre esta aplica&#231;&#227;o</div>
+      <ul class="check-list">
+        <li>C&#243;digo aberto sob licen&#231;a MIT</li>
+        <li>Sem depend&#234;ncias de frontend pesadas &#8212; vanilla CSS/JS</li>
+        <li>Deploy f&#225;cil no Render, Heroku ou qualquer host WSGI</li>
+        <li>Banco SQLite &#8212; zero configura&#231;&#227;o</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
