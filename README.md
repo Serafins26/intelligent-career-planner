@@ -1,155 +1,155 @@
 # Intelligent Career Planner
 
-A web platform to organize your professional development — studies, projects, certifications and career goals — all in one place.
+Uma plataforma web para organizar seu desenvolvimento profissional — estudos, projetos, certificações e metas de carreira — tudo em um só lugar.
 
-## Overview
+## Visão Geral
 
-This project was born from the need to organize information related to professional development, centralizing studies, projects, certifications and goals in a single place.
+Este projeto nasceu da necessidade de organizar informações relacionadas ao desenvolvimento profissional, centralizando estudos, projetos, certificações e metas em um único lugar.
 
-The goal is to provide a base that can be used and adapted by any technology professional — whether you are an RPA Developer, Data Analyst, AI Engineer, IT Governance specialist, infrastructure engineer, or student.
+O objetivo é disponibilizar uma base que possa ser utilizada e adaptada por qualquer profissional de tecnologia — seja você Desenvolvedor RPA, Analista de Dados, Engenheiro de IA, especialista em Governança de TI, engenheiro de infraestrutura ou estudante.
 
-## Features
+## Funcionalidades
 
-- **Task Planner** — Create and track study goals with area, priority, deadlines and time estimates
-- **Weekly Review** — Plan your week with focused tasks and daily logging
-- **Project Management** — Track personal and corporate projects with progress, tech stack, evidence links and FTE metrics
-- **Skills Dashboard** — Organize technical competencies by category (RPA, Cloud, AI, Integrations, etc.)
-- **Certificate Manager** — Log certifications with issuer, dates, credential IDs and LinkedIn validation links
-- **Resume Generator** — Auto-generated resume page (HTML + PDF) pulling data from the database and `data/resume.json`
-- **Admin Mode** — Login-protected editing with a viewer/recruiter mode that hides sensitive data (LGPD/NDA)
-- **Backup & Restore** — Export/import all data as JSON
+- **Planejador de Tarefas** — Crie e acompanhe objetivos de estudo com área, prioridade, prazos e estimativas de tempo
+- **Revisão Semanal** — Planeje sua semana com tarefas focadas e registro diário
+- **Gestão de Projetos** — Acompanhe projetos pessoais e corporativos com progresso, stack técnica, links de evidências e métricas de FTE
+- **Dashboard de Competências** — Organize competências técnicas por categoria (RPA, Cloud, IA, Integrações, etc.)
+- **Gerenciador de Certificados** — Registre certificações com emissor, datas, IDs de credencial e links de validação do LinkedIn
+- **Gerador de Currículo** — Página de currículo auto-gerada (HTML + PDF) obtendo dados do banco de dados e de `data/resume.json`
+- **Modo Admin** — Edição protegida por login com modo visualização/recrutador que oculta dados sensíveis (LGPD/NDA)
+- **Backup & Restauração** — Exportar/importar todos os dados como JSON
 
-## Technologies
+## Tecnologias
 
-| Layer | Stack |
-|-------|-------|
+| Camada | Stack |
+|--------|-------|
 | Backend | Python 3.11+, Flask 3, Flask-SQLAlchemy, Flask-Migrate |
-| Database | SQLite (file-based, zero config) |
-| Frontend | Jinja2 templates, vanilla CSS, vanilla JS |
-| PDF | WeasyPrint (optional, falls back to browser print) |
-| Hosting | Render (or any WSGI host) |
-| Server | Gunicorn |
+| Banco de Dados | SQLite (baseado em arquivo, zero configuração) |
+| Frontend | Templates Jinja2, CSS vanilla, JS vanilla |
+| PDF | WeasyPrint (opcional, fallback para impressão do navegador) |
+| Hospedagem | Render (ou qualquer host WSGI) |
+| Servidor | Gunicorn |
 
-## Installation
+## Instalação
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/intelligent-career-planner.git
+# Clone o repositório
+git clone https://github.com/seu-usuario/intelligent-career-planner.git
 cd intelligent-career-planner
 
-# Create a virtual environment
+# Crie um ambiente virtual
 python -m venv venv
 source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
+venv\\Scripts\\activate      # Windows
 
-# Install dependencies
+# Instale as dependências
 pip install -r requirements.txt
 
-# Run the application
+# Execute a aplicação
 python app.py
 ```
 
-The app starts at `http://localhost:5000`. On first run, the database is created automatically with demo data.
+A aplicação inicia em `http://localhost:5000`. Na primeira execução, o banco de dados é criado automaticamente com dados de demonstração.
 
-### Admin Access
+### Acesso Admin
 
-Navigate to `/admin?key=admin2026` to enable admin mode (edit, add, delete data).
+Navegue para `/admin?key=admin2026` para ativar o modo admin (editar, adicionar, excluir dados).
 
-Set the `ADMIN_KEY` environment variable to change the default key:
+Defina a variável de ambiente `ADMIN_KEY` para alterar a chave padrão:
 
 ```bash
-export ADMIN_KEY=your-secret-key
+export ADMIN_KEY=sua-chave-secreta
 ```
 
-### Environment Variables
+### Variáveis de Ambiente
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SECRET_KEY` | `dev-secret-change-me` | Flask session secret |
-| `ADMIN_KEY` | `admin2026` | Admin login key |
-| `DATABASE_URL` | `sqlite:///data/app.db` | Database URI |
+| Variável | Padrão | Descrição |
+|----------|--------|-----------|
+| `SECRET_KEY` | `dev-secret-change-me` | Chave secreta da sessão Flask |
+| `ADMIN_KEY` | `admin2026` | Chave de login do admin |
+| `DATABASE_URL` | `sqlite:///data/app.db` | URI do banco de dados |
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 intelligent-career-planner/
 ├── app/
-│   ├── __init__.py        # Application factory + seed data
-│   ├── config.py          # Configuration (env vars, paths)
-│   ├── models.py          # SQLAlchemy models (Task, Project, SkillCategory, Certificate)
-│   └── routes.py          # All routes, CRUD logic, stats computation
-├── templates/             # Jinja2 HTML templates
-│   ├── base.html          # Layout with navbar, tabs, footer
-│   ├── about.html         # Welcome / dashboard page
-│   ├── planner.html       # Task planner
-│   ├── weekly.html        # Weekly review
-│   ├── projects.html      # Project list + add form
-│   ├── project_detail.html # Project detail with evidence
-│   ├── skills.html        # Skills dashboard
-│   ├── certificates.html  # Certificate manager
-│   ├── resume.html        # Resume / CV page
-│   └── edit_*.html        # Edit forms
+│   ├── __init__.py        # Application factory + dados seed
+│   ├── config.py          # Configuração (variáveis de ambiente, caminhos)
+│   ├── models.py          # Modelos SQLAlchemy (Task, Project, SkillCategory, Certificate)
+│   └── routes.py          # Todas as rotas, lógica CRUD, cálculo de estatísticas
+├── templates/             # Templates HTML Jinja2
+│   ├── base.html          # Layout com navbar, abas, rodapé
+│   ├── about.html         # Página de boas-vindas / dashboard
+│   ├── planner.html       # Planejador de tarefas
+│   ├── weekly.html        # Revisão semanal
+│   ├── projects.html      # Lista de projetos + formulário de adição
+│   ├── project_detail.html # Detalhe do projeto com evidências
+│   ├── skills.html        # Dashboard de competências
+│   ├── certificates.html  # Gerenciador de certificados
+│   ├── resume.html        # Página de currículo / CV
+│   └── edit_*.html        # Formulários de edição
 ├── static/
-│   ├── css/styles.css     # Full design system (dark theme)
-│   └── js/main.js         # Client-side interactions
+│   ├── css/styles.css     # Sistema de design completo (tema escuro)
+│   └── js/main.js         # Interações do lado do cliente
 ├── data/
-│   ├── app.db             # SQLite database (auto-created)
-│   └── resume.json        # Extra resume data (experience, education)
-├── app.py                 # Development entry point
-├── wsgi.py                # Production entry point (Gunicorn)
-├── render.yaml            # Render.com deploy config
-└── requirements.txt       # Python dependencies
+│   ├── app.db             # Banco de dados SQLite (criado automaticamente)
+│   └── resume.json        # Dados extras do currículo (experiência, educação)
+├── app.py                 # Ponto de entrada de desenvolvimento
+├── wsgi.py                # Ponto de entrada de produção (Gunicorn)
+├── render.yaml            # Configuração de deploy no Render.com
+└── requirements.txt       # Dependências Python
 ```
 
-## Customization
+## Personalização
 
-### Your Resume Data
+### Seus Dados de Currículo
 
-Edit `data/resume.json` with your personal information:
+Edite `data/resume.json` com suas informações pessoais:
 
 ```json
 {
-  "name": "Your Name",
-  "headline": "Your Title | Your Specialty",
-  "location": "City, Country",
-  "email": "your@email.com",
-  "linkedin": "https://linkedin.com/in/yourprofile",
-  "summary": "Your professional summary...",
-  "keywords": ["Python", "RPA", "AI"],
+  "name": "Seu Nome",
+  "headline": "Seu Título | Sua Especialidade",
+  "location": "Cidade, País",
+  "email": "voce@email.com",
+  "linkedin": "https://linkedin.com/in/seuperfil",
+  "summary": "Seu resumo profissional...",
+  "keywords": ["Python", "RPA", "IA"],
   "experience": [...],
   "education": [...]
 }
 ```
 
-### Skills Categories
+### Categorias de Competências
 
-Add skill categories via the admin UI or edit the seed data in `app/__init__.py`.
+Adicione categorias de competências pela interface admin ou edite os dados seed em `app/__init__.py`.
 
-### Branding
+### Marca
 
-Update `templates/base.html` to change the app name and tagline.
+Atualize `templates/base.html` para alterar o nome da aplicação e o slogan.
 
 ## Roadmap
 
-- [ ] Dark/light theme toggle
-- [ ] Multi-language support (i18n)
-- [ ] Dashboard charts (progress over time)
-- [ ] Export resume to DOCX
-- [ ] API endpoints for external integrations
-- [ ] User registration (multi-tenant)
-- [ ] Mobile-responsive improvements
-- [ ] Notification system for deadlines
+- [ ] Alternância de tema escuro/claro
+- [ ] Suporte multi-idioma (i18n)
+- [ ] Gráficos no dashboard (progresso ao longo do tempo)
+- [ ] Exportar currículo para DOCX
+- [ ] Endpoints de API para integrações externas
+- [ ] Registro de usuários (multi-tenant)
+- [ ] Melhorias de responsividade mobile
+- [ ] Sistema de notificações para prazos
 
-## Contributing
+## Contribuindo
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
+Contribuições são bem-vindas! Fique à vontade para abrir issues ou enviar pull requests.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Faça um fork do repositório
+2. Crie sua branch de funcionalidade (`git checkout -b feature/funcionalidade-incrivel`)
+3. Commit suas mudanças (`git commit -m 'Adiciona funcionalidade incrível'`)
+4. Push para a branch (`git push origin feature/funcionalidade-incrivel`)
+5. Abra um Pull Request
 
-## License
+## Licença
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+Este projeto está licenciado sob a Licença MIT — veja o arquivo [LICENSE](LICENSE) para detalhes.
