@@ -226,7 +226,7 @@ def _is_recruiter() -> bool:
 def admin_login():
     """Autentica como admin via query param ?key=<ADMIN_KEY>."""
     import os
-    admin_key = os.environ.get("ADMIN_KEY", "andre2026")
+    admin_key = os.environ.get("ADMIN_KEY", "admin2026")
     if request.args.get("key") == admin_key:
         session["is_admin"] = True
         session["recruiter_mode"] = False

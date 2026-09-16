@@ -44,7 +44,7 @@ class Config:
     # Usada para assinar cookies de sessão (onde guardamos o "Modo Recrutador").
     # Em produção, troque por uma string longa e aleatória e guarde em variável
     # de ambiente — NUNCA deixe uma chave fraca em produção!
-    SECRET_KEY = "portfolio-secret-key"
+    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 
     # -------------------------------------------------------------------------
     # SQLALCHEMY_DATABASE_URI — Endereço do banco de dados

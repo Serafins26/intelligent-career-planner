@@ -129,6 +129,44 @@ Adicione categorias de competências pela interface admin ou edite os dados seed
 
 Atualize `templates/base.html` para alterar o nome da aplicação e o slogan.
 
+## Hospedagem no Render
+
+O projeto está pronto para deploy no [Render](https://render.com) com o arquivo `render.yaml` incluso.
+
+### Passo a passo
+
+1. **Crie uma conta** em [render.com](https://render.com) (pode usar login com GitHub)
+
+2. **Crie o banco de dados PostgreSQL**
+   - No painel do Render, clique em **New** → **PostgreSQL**
+   - Escolha um nome (ex: `career-planner-db`)
+   - Selecione o plano **Free**
+   - Clique em **Create Database**
+   - Após criado, copie a **Internal Database URL** (algo como `postgresql://user:pass@host/dbname`)
+
+3. **Crie o Web Service**
+   - Clique em **New** → **Web Service**
+   - Conecte seu repositório GitHub (`seu-usuario/intelligent-career-planner`)
+   - O Render detectará o `render.yaml` automaticamente e preencherá:
+     - **Build Command**: `pip install -r requirements.txt`
+     - **Start Command**: `gunicorn wsgi:app`
+   - Na seção **Environment Variables**, adicione:
+     - `DATABASE_URL` → cole a Internal Database URL copiada no passo anterior
+     - `ADMIN_KEY` → sua chave de admin (o padrão é `admin2026`, mas troque para algo seguro em produção)
+   - `SECRET_KEY` será gerado automaticamente pelo `render.yaml`
+
+4. **Deploy**
+   - Clique em **Create Web Service**
+   - O Render fará o build e publicará a aplicação
+   - Acesse a URL gerada (ex: `https://intelligent-career-planner.onrender.com`)
+
+### Observações importantes
+
+- O plano gratuito do Render **suspende** o serviço após 15 minutos de inatividade — a primeira requisição após a suspensão pode levar ~30 segundos
+- Na primeira execução, o banco será criado automaticamente com dados de demonstração
+- Para acessar o modo admin em produção: `https://sua-url.onrender.com/admin?key=sua-chave`
+- **Nunca** deixe credenciais sensíveis no código — use sempre variáveis de ambiente
+
 ## Roadmap
 
 - [ ] Alternância de tema escuro/claro

@@ -12,6 +12,8 @@ from __future__ import annotations  # Permite usar tipos modernos em versões an
 
 # Importa a função "create_app" que está dentro da pasta "app/" (__init__.py)
 # Essa função é responsável por montar tudo: banco, rotas, configurações, etc.
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from app import create_app
 
 # Chama a função para criar e configurar a aplicação Flask
